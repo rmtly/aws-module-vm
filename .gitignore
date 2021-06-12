@@ -1,0 +1,3 @@
+sample/config/dev
+sample/terraform.tfstate*
+sample/.terraform.tfstate*

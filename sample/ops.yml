@@ -1,0 +1,46 @@
+dependencies:
+  sshkey:
+    - config/$environment/id_rsa_app
+  custom:
+    - ops terraform init
+actions:
+  terraform:
+    command: terraform1
+  apply:
+    command: ops terraform apply
+    alias: a
+    load_secrets: true
+  apply-auto-approve:
+    command: ops apply --auto-approve
+    alias: aa
+  destroy:
+    command: ops terraform destroy
+    alias: d
+    load_secrets: true
+  destroy-auto-approve:
+    command: ops destroy --auto-approve
+    alias: dd
+  plan:
+    command: ops terraform plan
+    alias: p
+    load_secrets: true
+  output:
+    command: ops terraform output
+    alias: o
+  graph:
+    command: ops terraform graph | dot -T pdf -o resource_graph.pdf
+    alias: g
+  open-graph:
+    command: ops graph && open resource_graph.pdf
+    alias: og
+  ssh:
+    command: ssh $SSH_USER@$(ops o -raw dns_name)
+options:
+  sshkey:
+    passphrase_var: SSH_KEY_PASSPHRASE
+  exec:
+    load_secrets: true
+  environment:
+    TF_VAR_environment: $environment
+    SSH_USER: ubuntu
+    TF_DATA_DIR: "config/$environment/.terraform"
