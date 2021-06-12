@@ -29,41 +29,25 @@ data "aws_ami" "ubuntu" {
 }
 
 locals {
-  name = "aws-module-vm-sample"
+  name = "vm-sample"
 }
 
-resource "aws_security_group" "app" {
-  name        = local.name
-  description = "Allow traffic to ${local.name} node"
+module "security_group" {
+  source = "git@github.com:rmtly/aws-module-security-group.git?ref=v1.0"
 
-  ingress {
-    description      = "TLS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
+  name = local.name
+  ingress_rules = [
+    {
+      "name": "TLS",
+      "port": 443
+    },
+    {
+      "name": "SSH",
+      "port": 22
+    }
+  ]
   tags = {
-    Name = local.name
+    name = local.name
     environment = "dev"
   }
 }
