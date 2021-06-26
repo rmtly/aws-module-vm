@@ -1,9 +1,5 @@
-locals {
-  name = var.environment == "production" ? var.app_name : "${var.app_name}-${var.environment}"
-}
-
 resource "aws_key_pair" "app" {
-  key_name   = local.name
+  key_name   = var.app_name
   public_key = file(var.ssh_public_key_path)
 }
 
@@ -20,7 +16,7 @@ resource "aws_instance" "app" {
   }
 
   tags = {
-    Name = local.name
+    Name = var.app_name
   }
 }
 
@@ -29,7 +25,7 @@ resource "aws_ebs_volume" "app" {
   availability_zone = var.availability_zone
 
   tags = {
-    Name = local.name
+    Name = var.app_name
   }
 }
 

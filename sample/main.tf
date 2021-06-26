@@ -29,7 +29,7 @@ data "aws_ami" "ubuntu" {
 }
 
 locals {
-  name = "vm-sample"
+  name = "vm-sample-dev"
 }
 
 module "security_group" {
