@@ -3,5 +3,5 @@ output "ip" {
 }
 
 output "dns_name" {
-  value = aws_instance.app.public_dns
+  value = local.fqdn
 }

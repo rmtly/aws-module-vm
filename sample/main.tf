@@ -56,7 +56,8 @@ module "vm" {
   source = "../."
 
   environment = "dev"
-  app_name = local.name
+  parent_domain_name = "rmtly.com"
+  hostname = local.name
   ami_id = data.aws_ami.ubuntu.id
   instance_size = "t3.nano"
   managed_disk_gbs = 10

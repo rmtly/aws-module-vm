@@ -3,11 +3,6 @@ variable "environment" {
   type = string
 }
 
-variable "app_name" {
-  description = "The name of the app being deployed, for naming and tagging."
-  type = string
-}
-
 variable "ami_id" {
   description = "The ID of the AMI to use for the VM."
   type = string
@@ -43,5 +38,15 @@ variable "availability_zone" {
 
 variable "security_group_name" {
   description = "The name of the security group in which to put the VM (must already exist)."
+  type = string
+}
+
+variable "parent_domain_name" {
+  type = string
+  default = null
+}
+
+variable "hostname" {
+  description = "The name of the VM and the hostname component of the VM's FQDN, if a parent_domain_name is given."
   type = string
 }

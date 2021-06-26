@@ -1,5 +1,9 @@
+locals {
+  fqdn = var.parent_domain_name == null ? aws_instance.app.public_dns : "${var.hostname}.${var.parent_domain_name}"
+}
+
 resource "aws_key_pair" "app" {
-  key_name   = var.app_name
+  key_name   = var.hostname
   public_key = file(var.ssh_public_key_path)
 }
 
@@ -16,7 +20,7 @@ resource "aws_instance" "app" {
   }
 
   tags = {
-    Name = var.app_name
+    Name = var.hostname
   }
 }
 
@@ -25,7 +29,7 @@ resource "aws_ebs_volume" "app" {
   availability_zone = var.availability_zone
 
   tags = {
-    Name = var.app_name
+    Name = var.hostname
   }
 }
 
@@ -33,4 +37,18 @@ resource "aws_volume_attachment" "app" {
   device_name = "/dev/sdd"
   volume_id   = aws_ebs_volume.app.id
   instance_id = aws_instance.app.id
+}
+
+data "aws_route53_zone" "dns_zone" {
+  count = var.parent_domain_name == null ? 0 : 1
+  name         = "${var.parent_domain_name}."
+}
+
+resource "aws_route53_record" "this" {
+  count = var.parent_domain_name == null ? 0 : 1
+  zone_id = data.aws_route53_zone.dns_zone[0].zone_id
+  name    = local.fqdn
+  type    = "A"
+  ttl     = "300"
+  records = [aws_instance.app.public_ip]
 }
