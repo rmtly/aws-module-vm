@@ -54,7 +54,7 @@ resource "aws_route53_record" "this" {
 
   provisioner "local-exec" {
     when    = "create"
-    command = "ssh-keyscan -t rsa ${self.name} >> ~/.ssh/known_hosts"
+    command = "ssh-keyscan -t rsa ${self.name} >> ${pathexpand("~/.ssh/known_hosts")}"
   }
   provisioner "local-exec" {
     when    = "destroy"
