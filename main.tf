@@ -51,4 +51,13 @@ resource "aws_route53_record" "this" {
   type    = "A"
   ttl     = "300"
   records = [aws_instance.app.public_ip]
+
+  provisioner "local-exec" {
+    when    = "create"
+    command = "ssh-keyscan -t rsa ${self.name} >> ~/.ssh/known_hosts"
+  }
+  provisioner "local-exec" {
+    when    = "destroy"
+    command = "ssh-keygen -R ${self.name}"
+  }
 }
