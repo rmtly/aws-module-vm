@@ -1,9 +1,10 @@
 locals {
   fqdn = var.parent_domain_name == null ? aws_instance.app.public_dns : "${var.hostname}.${var.parent_domain_name}"
+  tag = var.environment == "production" ? var.hostname : "${var.hostname}-${var.environment}"
 }
 
 resource "aws_key_pair" "app" {
-  key_name   = var.hostname
+  key_name   = local.tag
   public_key = file(var.ssh_public_key_path)
 }
 
@@ -20,7 +21,7 @@ resource "aws_instance" "app" {
   }
 
   tags = {
-    Name = var.hostname
+    Name = local.tag
   }
 }
 
@@ -29,7 +30,7 @@ resource "aws_ebs_volume" "app" {
   availability_zone = var.availability_zone
 
   tags = {
-    Name = var.hostname
+    Name = local.tag
   }
 }
 
